@@ -1,0 +1,22 @@
+{
+  "name": "melhor-envio-tracking",
+  "version": "1.0.0",
+  "description": "Exemplo de requisição para API de tracking do Melhor Envio",
+  "main": "melhor-envio-tracking.js",
+  "scripts": {
+    "start": "node melhor-envio-tracking.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "keywords": [
+    "melhor-envio",
+    "api",
+    "tracking",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+
