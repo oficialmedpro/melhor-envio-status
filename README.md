@@ -1,4 +1,4 @@
-# Melhor Envio - API de Tracking
+# Melhor Envio - API de Tracking (melhor-envio-status)
 
 Este projeto contém um exemplo de como fazer requisições para a API de tracking do Melhor Envio.
 
@@ -42,4 +42,3 @@ consultarRastreamento()
 - O token de autorização na imagem está truncado, você precisará usar seu token completo
 - O ID de correio usado é apenas um exemplo: `a01f6c8e-0f14-4c29-8799-ae79c1d1da5e`
 - Certifique-se de ter as permissões necessárias na API do Melhor Envio
-
