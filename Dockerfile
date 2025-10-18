@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copiar arquivos de dependências
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 # Instalar dependências de produção
 RUN npm ci --only=production
