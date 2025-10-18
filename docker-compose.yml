@@ -1,0 +1,68 @@
+version: "3.7"
+
+services:
+  melhor-envio-tracking:
+    image: oficialmedpro/melhor-envio-tracking:latest
+    networks:
+      - OficialMed
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MELHOR_ENVIO_TOKEN_FILE=/run/secrets/MELHOR_ENVIO_TOKEN
+      - USER_AGENT=Aplicação mkt.oficialmed@gmail.com
+    secrets:
+      - MELHOR_ENVIO_TOKEN
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.enable=true
+
+        # Router principal (HTTPS)
+        - traefik.http.routers.rastreio.rule=Host(`rastreio.oficialmed.com.br`)
+        - traefik.http.routers.rastreio.entrypoints=websecure
+        - traefik.http.routers.rastreio.tls.certresolver=letsencryptresolver
+
+        # Serviço apontando para a porta 3000 do container
+        - traefik.http.services.rastreio.loadbalancer.server.port=3000
+        - traefik.http.services.rastreio.loadbalancer.passHostHeader=true
+        - traefik.http.routers.rastreio.service=rastreio
+
+        # Redirecionar HTTP -> HTTPS
+        - traefik.http.routers.rastreio-http.rule=Host(`rastreio.oficialmed.com.br`)
+        - traefik.http.routers.rastreio-http.entrypoints=web
+        - traefik.http.routers.rastreio-http.middlewares=force-https-rastreio
+        - traefik.http.middlewares.force-https-rastreio.redirectscheme.scheme=https
+
+        # (Opcional) redirecionar www -> raiz
+        - traefik.http.routers.rastreio-www.rule=Host(`www.rastreio.oficialmed.com.br`)
+        - traefik.http.routers.rastreio-www.entrypoints=websecure
+        - traefik.http.routers.rastreio-www.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.rastreio-www.middlewares=rastreio-www2root
+        - traefik.http.middlewares.rastreio-www2root.redirectregex.regex=^https://www\\.(.*)
+        - traefik.http.middlewares.rastreio-www2root.redirectregex.replacement=https://$${1}
+
+networks:
+  OficialMed:
+    external: true
+    name: OficialMed
+
+secrets:
+  MELHOR_ENVIO_TOKEN:
+    external: true
+
